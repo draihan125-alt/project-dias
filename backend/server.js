@@ -15,14 +15,11 @@ const pool = new Pool({
 });
 
 // ✅ GET DATA
-app.get('/barang', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM equipments');
-    res.json(result.rows);
-  } catch (err) {
-    console.log(err);
-    res.status(500).send('Error server');
-  }
+app.get('/barang', (req, res) => {
+  res.json([
+    { id: 1, equipment: "Laptop", usb: "USB1" },
+    { id: 2, equipment: "Printer", usb: "USB2" }
+  ]);
 });
 
 // ✅ POST DATA
