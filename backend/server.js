@@ -17,8 +17,28 @@ const pool = new Pool({
 // ✅ GET DATA
 app.get('/barang', (req, res) => {
   res.json([
-    { id: 1, equipment: "Laptop", usb: "USB1" },
-    { id: 2, equipment: "Printer", usb: "USB2" }
+    {
+      id: 1,
+      equipment: "Laptop",
+      usb: "USB1",
+      asset: "A001",
+      location: "Room 1",
+      condition: "Good",
+      calibration: "Yes",
+      date: "2026-01-01",
+      status: "OK"
+    },
+    {
+      id: 2,
+      equipment: "Printer",
+      usb: "USB2",
+      asset: "A002",
+      location: "Room 2",
+      condition: "Good",
+      calibration: "No",
+      date: "2026-01-02",
+      status: "NG"
+    }
   ]);
 });
 
