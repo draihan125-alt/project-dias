@@ -10,12 +10,28 @@ app.use(express.json());
 
 // ✅ DATABASE
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'arem_db',
- password: '111',
-  port: 5433,
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
+``
+// ✅ AUTO CREATE TABLE (TAMBAH DI SINI)
+pool.query(`
+CREATE TABLE IF NOT EXISTS equipments (
+  id SERIAL PRIMARY KEY,
+  equipment TEXT,
+  asset TEXT,
+  location TEXT,
+  condition TEXT,
+  calibration TEXT,
+  date_in DATE,
+  date_out DATE,
+  status TEXT
+);
+`)
+.then(() => console.log("✅ Table ready"))
+.catch(err => console.error("❌ Table error:", err));
 pool.connect()
   .then(() => {
     console.log('✅ Database connect');
