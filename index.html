@@ -1,5 +1,4 @@
-<!doctype html>
-<!-- TABLE -->
+<!doctype html><!doctype TABLE -->
 <div class="table-card">
   <table>
     <thead>
@@ -22,20 +21,17 @@
 <div class="modal-content">
   <h3 id="modalTitle">Tambah Data</h3>
 
+  <input id="fEquipment" placeholder="Equipment" />
+  <input id="fAsset" placeholder="Asset" />
+  <input id="fLocation" placeholder="Location" />
+  <input id="fCondition" placeholder="Condition" />
+  <input id="fCalibration" placeholder="Calibration" />
 
-<input id="fEquipment">
-<input id="fAsset">
-<input id="fLocation">
-<input id="fCondition">
-<input id="fCalibration">
-<input id="fDateIn" type="date">
-<input id="fDateOut" type="date">
-<select id="fStatus">
-
-
+  <!-- ✅ cuma SATU date -->
   <input id="fDateIn" type="date" />
   <input id="fDateOut" type="date" />
 
+  <!-- ✅ cuma SATU select -->
   <select id="fStatus">
     <option value="OK">OK</option>
     <option value="NG">NG</option>
@@ -45,7 +41,7 @@
 </div>
 
 <script>
-const API_URL ="https://project-dias.onrender.com/equipments";
+const API_URL = "https://project-dias.onrender.com/equipments";
 let data = [];
 
 // ✅ FETCH DATA
@@ -63,21 +59,24 @@ function renderTable() {
   tbody.innerHTML = "";
 
   data.forEach(item => {
-    const badgeClass = item.status === "OK"
-      ? "badge badge-ok"
-      : "badge badge-ng";
+    const status = item.status?.toUpperCase();
+
+    const badgeClass =
+      status === "OK"
+        ? "badge badge-ok"
+        : "badge badge-ng";
 
     const row = `
-    <tr>
-      <td>${item.equipment}</td>
-      <td>${item.asset}</td>
-      <td>${item.location}</td>
-      <td>${item.condition}</td>
-      <td>${item.calibration}</td>
-      <td>${item.date_in ? item.date_in.split('T')[0] : '-'}</td>
-      <td>${item.date_out ? item.date_out.split('T')[0] : '-'}</td>
-      <td><span class="${badgeClass}">${item.status}</span></td>
-    </tr>
+      <tr>
+        <td>${item.equipment}</td>
+        <td>${item.asset}</td>
+        <td>${item.location}</td>
+        <td>${item.condition}</td>
+        <td>${item.calibration}</td>
+        <td>${item.date_in ? item.date_in.split('T')[0] : '-'}</td>
+        <td>${item.date_out ? item.date_out.split('T')[0] : '-'}</td>
+        <td><span class="${badgeClass}">${status}</span></td>
+      </tr>
     `;
 
     tbody.innerHTML += row;
@@ -111,7 +110,7 @@ async function saveData() {
 
 // ✅ LOAD
 fetchData();
-</script><html lang="id">
+</script>
   <head>
     <meta charset="UTF-8" />
     <title>Improvement Dashboard</title>
