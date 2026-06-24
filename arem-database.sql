@@ -1,13 +1,16 @@
+CREATE DATABASE arem_db;
+USE arem_db;
+
 CREATE TABLE equipments (
-    id SERIAL PRIMARY KEY,
-    equipment VARCHAR(255),
-    uob VARCHAR(100),
-    asset VARCHAR(100),
-    location VARCHAR(255),
-    condition VARCHAR(255),
-    calibration VARCHAR(255),
-    date DATE,
-    status VARCHAR(10),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);;
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  equipment VARCHAR(255),
+  uob VARCHAR(100),
+  asset VARCHAR(100),
+  location VARCHAR(255),
+  `condition` VARCHAR(255),
+  calibration VARCHAR(255),
+  date DATE,
+  status ENUM('OK','NG'),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
