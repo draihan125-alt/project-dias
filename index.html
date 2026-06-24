@@ -1,22 +1,62 @@
-<!doctype html><!doctype TABLE -->
-<div class="table-card">
-  <table>
-    <thead>
-      <tr>
-        <th>Equipment</th>
-        <th>Asset</th>
-        <th>Location</th>
-        <th>Condition</th>
-        <th>Calibration</th>
-        <th>Date In</th>
-        <th>Date Out</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody id="table-body"></tbody>
-  </table>
-</div>
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Improvement Dashboard</title>
 
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f6f9;
+      margin: 0;
+    }
+
+    .table-card {
+      background: white;
+      margin: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #f5f5f5;
+      padding: 12px;
+      text-align: left;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ✅ TABLE -->
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>Equipment</th>
+          <th>Asset</th>
+          <th>Location</th>
+          <th>Condition</th>
+          <th>Calibration</th>
+          <th>Date In</th>
+          <th>Date Out</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
 <!-- MODAL -->
 <div class="modal-content">
   <h3 id="modalTitle">Tambah Data</h3>
