@@ -7,12 +7,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet"/>
 
 <style>
+* {
+  font-family: 'Poppins', sans-serif;
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
   background: #f4f6f9;
 }
 
+/* TOPBAR */
 .topbar {
   background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
@@ -21,6 +26,18 @@ body {
   border-radius: 12px;
 }
 
+/* BUTTON */
+.btn-add {
+  margin: 20px;
+  padding: 10px 20px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* TABLE */
 .table-card {
   background: white;
   margin: 20px;
@@ -34,19 +51,49 @@ table {
 }
 
 th, td {
-  padding: 10px;
+  padding: 12px;
 }
 
 th {
   background: #f5f5f5;
 }
 
+/* BADGE */
+.badge-ok {
+  background: #d4edda;
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
+.badge-ng {
+  background: #f8d7da;
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
+/* MODAL */
+.hidden {
+  display: none;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .modal-content {
   background: white;
   padding: 20px;
-  margin: 20px;
   border-radius: 10px;
-  width: 300px;
+  width: 350px;
 }
 
 input, select {
@@ -54,25 +101,20 @@ input, select {
   margin: 5px 0;
   padding: 8px;
 }
-
-.badge-ok {
-  background: #d4edda;
-  padding: 5px 10px;
-}
-
-.badge-ng {
-  background: #f8d7da;
-  padding: 5px 10px;
-}
 </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
 <div class="topbar">
   <h2>📋 Improvement Dashboard</h2>
 </div>
 
+<!-- BUTTON -->
+<button class="btn-add" onclick="openModal()">+ Add Data</button>
+
+<!-- TABLE -->
 <div class="table-card">
 <table>
 <thead>
@@ -91,30 +133,35 @@ input, select {
 </table>
 </div>
 
-<div class="modal-content">
-<h3>Tambah Data</h3>
+<!-- MODAL -->
+<div id="modal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Tambah Data</h3>
 
-<input id="fEquipment" placeholder="Equipment">
-<input id="fAsset" placeholder="Asset">
-<input id="fLocation" placeholder="Location">
-<input id="fCondition" placeholder="Condition">
-<input id="fCalibration" placeholder="Calibration">
+    <input id="fEquipment" placeholder="Equipment">
+    <input id="fAsset" placeholder="Asset">
+    <input id="fLocation" placeholder="Location">
+    <input id="fCondition" placeholder="Condition">
+    <input id="fCalibration" placeholder="Calibration">
 
-<input id="fDateIn" type="date">
-<input id="fDateOut" type="date">
+    <input id="fDateIn" type="date">
+    <input id="fDateOut" type="date">
 
-<select id="fStatus">
-<option value="OK">OK</option>
-<option value="NG">NG</option>
-</select>
+    <select id="fStatus">
+      <option value="OK">OK</option>
+      <option value="NG">NG</option>
+    </select>
 
-<button onclick="saveData()">Save</button>
+    <button onclick="saveData()">Save</button>
+    <button onclick="closeModal()">Close</button>
+  </div>
 </div>
 
 <script>
 const API_URL = "https://project-dias.onrender.com/equipments";
 let data = [];
 
+// FETCH
 async function fetchData() {
   const res = await fetch(API_URL);
   const result = await res.json();
@@ -122,13 +169,13 @@ async function fetchData() {
   renderTable();
 }
 
+// RENDER TABLE
 function renderTable() {
   const tbody = document.getElementById("table-body");
   tbody.innerHTML = "";
 
   data.forEach(item => {
     const status = item.status?.toUpperCase();
-
     const badge = status === "OK" ? "badge-ok" : "badge-ng";
 
     const row = `
@@ -148,6 +195,7 @@ function renderTable() {
   });
 }
 
+// SAVE DATA
 async function saveData() {
   const newData = {
     equipment: fEquipment.value,
@@ -166,10 +214,21 @@ async function saveData() {
     body: JSON.stringify(newData)
   });
 
-  alert("✅ saved");
+  alert("✅ Data saved");
+  closeModal();
   fetchData();
 }
 
+// MODAL CONTROL
+function openModal() {
+  document.getElementById("modal").classList.remove("hidden");
+}
+
+function closeModal() {
+  document.getElementById("modal").classList.add("hidden");
+}
+
+// LOAD
 fetchData();
 </script>
 
