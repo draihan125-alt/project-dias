@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Improvement Dashboard</title>
+<title>RAMC Dashboard</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet"/>
 
@@ -73,7 +73,7 @@ th {
 
 /* MODAL */
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .modal {
@@ -108,7 +108,7 @@ input, select {
 
 <!-- HEADER -->
 <div class="topbar">
-  <h2>📋 Improvement Dashboard</h2>
+  <h2>📋 RAMC Dashboard</h2>
 </div>
 
 <!-- BUTTON -->
@@ -219,7 +219,7 @@ async function saveData() {
   fetchData();
 }
 
-// MODAL CONTROL
+// ✅ MODAL CONTROL FIX
 function openModal() {
   document.getElementById("modal").classList.remove("hidden");
 }
@@ -227,6 +227,14 @@ function openModal() {
 function closeModal() {
   document.getElementById("modal").classList.add("hidden");
 }
+
+// ✅ BONUS: klik luar = close
+window.onclick = function(e) {
+  const modal = document.getElementById("modal");
+  if (e.target === modal) {
+    closeModal();
+  }
+};
 
 // LOAD
 fetchData();
