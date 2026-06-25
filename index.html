@@ -1,99 +1,127 @@
 <!doctype html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Improvement Dashboard</title>
+<meta charset="UTF-8">
+<title>Improvement Dashboard</title>
 
-  <style>
-    body {
-      font-family: Arial;
-      background: #f4f6f9;
-      margin: 0;
-    }
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet"/>
 
-    .table-card {
-      background: white;
-      margin: 20px;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
+<style>
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: #f4f6f9;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+.topbar {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 20px;
+  margin: 20px;
+  border-radius: 12px;
+}
 
-    th {
-      background: #f5f5f5;
-      padding: 12px;
-      text-align: left;
-    }
+.table-card {
+  background: white;
+  margin: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+}
 
-    td {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-    }
-  </style>
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+}
+
+th {
+  background: #f5f5f5;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  margin: 20px;
+  border-radius: 10px;
+  width: 300px;
+}
+
+input, select {
+  width: 100%;
+  margin: 5px 0;
+  padding: 8px;
+}
+
+.badge-ok {
+  background: #d4edda;
+  padding: 5px 10px;
+}
+
+.badge-ng {
+  background: #f8d7da;
+  padding: 5px 10px;
+}
+</style>
 </head>
 
 <body>
 
-  <!-- ✅ TABLE -->
-  <div class="table-card">
-    <table>
-      <thead>
-        <tr>
-          <th>Equipment</th>
-          <th>Asset</th>
-          <th>Location</th>
-          <th>Condition</th>
-          <th>Calibration</th>
-          <th>Date In</th>
-          <th>Date Out</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="table-body"></tbody>
-    </table>
-  </div>
-<!-- MODAL -->
+<div class="topbar">
+  <h2>📋 Improvement Dashboard</h2>
+</div>
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>Equipment</th>
+<th>Asset</th>
+<th>Location</th>
+<th>Condition</th>
+<th>Calibration</th>
+<th>Date In</th>
+<th>Date Out</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="table-body"></tbody>
+</table>
+</div>
+
 <div class="modal-content">
-  <h3 id="modalTitle">Tambah Data</h3>
+<h3>Tambah Data</h3>
 
-  <input id="fEquipment" placeholder="Equipment" />
-  <input id="fAsset" placeholder="Asset" />
-  <input id="fLocation" placeholder="Location" />
-  <input id="fCondition" placeholder="Condition" />
-  <input id="fCalibration" placeholder="Calibration" />
+<input id="fEquipment" placeholder="Equipment">
+<input id="fAsset" placeholder="Asset">
+<input id="fLocation" placeholder="Location">
+<input id="fCondition" placeholder="Condition">
+<input id="fCalibration" placeholder="Calibration">
 
-  <!-- ✅ cuma SATU date -->
-  <input id="fDateIn" type="date" />
-  <input id="fDateOut" type="date" />
+<input id="fDateIn" type="date">
+<input id="fDateOut" type="date">
 
-  <!-- ✅ cuma SATU select -->
-  <select id="fStatus">
-    <option value="OK">OK</option>
-    <option value="NG">NG</option>
-  </select>
+<select id="fStatus">
+<option value="OK">OK</option>
+<option value="NG">NG</option>
+</select>
 
-  <button onclick="saveData()">Save</button>
+<button onclick="saveData()">Save</button>
 </div>
 
 <script>
 const API_URL = "https://project-dias.onrender.com/equipments";
 let data = [];
 
-// ✅ FETCH DATA
 async function fetchData() {
   const res = await fetch(API_URL);
   const result = await res.json();
-
   data = result;
   renderTable();
 }
 
-// ✅ RENDER TABLE
 function renderTable() {
   const tbody = document.getElementById("table-body");
   tbody.innerHTML = "";
@@ -101,348 +129,49 @@ function renderTable() {
   data.forEach(item => {
     const status = item.status?.toUpperCase();
 
-    const badgeClass =
-      status === "OK"
-        ? "badge badge-ok"
-        : "badge badge-ng";
+    const badge = status === "OK" ? "badge-ok" : "badge-ng";
 
     const row = `
-      <tr>
-        <td>${item.equipment}</td>
-        <td>${item.asset}</td>
-        <td>${item.location}</td>
-        <td>${item.condition}</td>
-        <td>${item.calibration}</td>
-        <td>${item.date_in ? item.date_in.split('T')[0] : '-'}</td>
-        <td>${item.date_out ? item.date_out.split('T')[0] : '-'}</td>
-        <td><span class="${badgeClass}">${status}</span></td>
-      </tr>
+    <tr>
+      <td>${item.equipment}</td>
+      <td>${item.asset}</td>
+      <td>${item.location}</td>
+      <td>${item.condition}</td>
+      <td>${item.calibration}</td>
+      <td>${item.date_in?.split('T')[0] || '-'}</td>
+      <td>${item.date_out?.split('T')[0] || '-'}</td>
+      <td><span class="${badge}">${status}</span></td>
+    </tr>
     `;
 
     tbody.innerHTML += row;
   });
 }
 
-// ✅ SAVE DATA
 async function saveData() {
   const newData = {
-    equipment: document.getElementById("fEquipment").value,
-    asset: document.getElementById("fAsset").value,
-    location: document.getElementById("fLocation").value,
-    condition: document.getElementById("fCondition").value,
-    calibration: document.getElementById("fCalibration").value,
-    date_in: document.getElementById("fDateIn").value,
-    date_out: document.getElementById("fDateOut").value,
-    status: document.getElementById("fStatus").value
+    equipment: fEquipment.value,
+    asset: fAsset.value,
+    location: fLocation.value,
+    condition: fCondition.value,
+    calibration: fCalibration.value,
+    date_in: fDateIn.value,
+    date_out: fDateOut.value,
+    status: fStatus.value
   };
 
   await fetch(API_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: {"Content-Type": "application/json"},
     body: JSON.stringify(newData)
   });
 
-  alert("✅ Data berhasil disimpan");
+  alert("✅ saved");
   fetchData();
 }
 
-// ✅ LOAD
 fetchData();
 </script>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Improvement Dashboard</title>
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
-
-    <style>
-      * {
-        font-family: 'Poppins', sans-serif;
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        background: #f4f6f9;
-      }
-
-      .hidden {
-        display: none !important;
-      }
-
-      /* ✅ TOPBAR */
-      .topbar {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        padding: 20px 30px;
-        border-radius: 12px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin: 20px;
-      }
-
-      /* ✅ BUTTON */
-      .btn-add {
-        padding: 10px 20px;
-        background: #27ae60;
-        border: none;
-        border-radius: 8px;
-        color: white;
-        cursor: pointer;
-      }
-
-      /* ✅ TOOLBAR */
-      .toolbar {
-        display: flex;
-        justify-content: space-between;
-        margin: 0 20px 15px;
-      }
-
-      .search-box input {
-        padding: 10px 15px;
-        border: 2px solid #ddd;
-        border-radius: 8px;
-        width: 250px;
-      }
-
-      /* ✅ TABLE */
-      .table-card {
-        background: white;
-        border-radius: 12px;
-        overflow: hidden;
-        margin: 0 20px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-
-      th {
-        background: #f8f9fa;
-        padding: 14px;
-        font-size: 13px;
-        text-align: left;
-      }
-
-      td {
-        padding: 12px;
-        border-bottom: 1px solid #eee;
-      }
-
-      tr:hover {
-        background: #fafafa;
-      }
-
-      /* ✅ BADGE */
-      .badge {
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-      }
-
-      .badge-ok {
-        background: #d4edda;
-        color: #155724;
-      }
-      .badge-ng {
-        background: #f8d7da;
-        color: #721c24;
-      }
-
-      /* ✅ ACTION */
-      .btn-edit {
-        color: #3498db;
-        cursor: pointer;
-        margin-right: 8px;
-      }
-      .btn-delete {
-        color: #e74c3c;
-        cursor: pointer;
-      }
-
-      /* ✅ MODAL */
-      .modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .modal-content {
-        background: white;
-        padding: 25px;
-        border-radius: 12px;
-        width: 420px;
-      }
-
-      .modal-content input,
-      .modal-content select {
-        width: 100%;
-        padding: 10px;
-        margin: 6px 0;
-        border: 2px solid #ddd;
-        border-radius: 8px;
-      }
-
-      .btn-save {
-        background: #27ae60;
-        color: white;
-        padding: 10px 15px;
-        border: none;
-        border-radius: 8px;
-      }
-
-      .btn-cancel {
-        background: #999;
-        color: white;
-        padding: 10px 15px;
-        border: none;
-        border-radius: 8px;
-      }
-    </style>
-  </head>
-
-  <body>
-    <div class="topbar">
-      <h2>📋 Improvement Dashboard</h2>
-      <button class="btn-add" onclick="openModal()">+ Add Data</button>
-    </div>
-
-    <div class="toolbar">
-      <div class="search-box">
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="🔍 Search..."
-          onkeyup="renderTable()"
-        />
-      </div>
-      <div>Total Data: <b id="totalData">0</b></div>
-    </div>
-
-<!-- TABLE -->
-<div class="table-card">
-  <table>
-    <thead>
-      <tr>
-        <th>Equipment</th>
-        <th>Asset</th>
-        <th>Location</th>
-        <th>Condition</th>
-        <th>Calibration</th>
-        <th>Date In</th>
-        <th>Date Out</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody id="table-body"></tbody>
-  </table>
-</div>
-
-<!-- MODAL -->
-<div class="modal-content">
-  <h3 id="modalTitle">Tambah Data</h3>
-
-  <input id="fEquipment" placeholder="Equipment" />
-  <input id="fAsset" placeholder="Asset" />
-  <input id="fLocation" placeholder="Location" />
-  <input id="fCondition" placeholder="Condition" />
-  <input id="fCalibration" placeholder="Calibration" />
-
-  <input id="fDateIn" type="date" />
-  <input id="fDateOut" type="date" />
-
-  <select id="fStatus">
-    <option value="OK">OK</option>
-    <option value="NG">NG</option>
-  </select>
-
-  <button onclick="saveData()">Save</button>
-</div>
-
-<script>
-const API_URL ="https://project-dias.onrender.com/equipments";
-let data = [];
-
-// ✅ FETCH DATA
-async function fetchData() {
-  const res = await fetch(API_URL);
-  const result = await res.json();
-
-  data = result;
-  renderTable();
-}
-
-// ✅ RENDER TABLE
-function renderTable() {
-  const tbody = document.getElementById("table-body");
-  tbody.innerHTML = "";
-
-  data.forEach(item => {
-    const badgeClass = item.status === "OK"
-      ? "badge badge-ok"
-      : "badge badge-ng";
-
-const row = `
-  <tr>
-    <td>${item.equipment}</td>
-    <td>${item.asset}</td>
-    <td>${item.location}</td>
-    <td>${item.condition}</td>
-    <td>${item.calibration}</td>
-    <td>${item.date_in ? item.date_in.split('T')[0] : '-'}</td>
-    <td>${item.date_out ? item.date_out.split('T')[0] : '-'}
-      </td>
-    <td><span class="${badgeClass}">${item.status}</span></td>
- </tr>
-`;
-
-
-
-    tbody.innerHTML += row;
-  });
-}
-
-// ✅ SAVE DATA
-async function saveData() {
-  const newData = {
-    equipment: document.getElementById("fEquipment").value,
-    asset: document.getElementById("fAsset").value,
-    location: document.getElementById("fLocation").value,
-    condition: document.getElementById("fCondition").value,
-    calibration: document.getElementById("fCalibration").value,
-    date_in: document.getElementById("fDateIn").value,
-    date_out: document.getElementById("fDateOut").value,
-    status: document.getElementById("fStatus").value
-  };
-
-  await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(newData)
-  });
-
-  alert("✅ Data berhasil disimpan");
-  fetchData();
-}
-
-// ✅ LOAD
-fetchData();
-</script>
-  </body>
+</body>
 </html>
