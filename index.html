@@ -1,278 +1,160 @@
-<!DOCTYPE html><!DOCTYPE htmlen">
+<!DOCTYPE html>
+<html>
 <head>
-<meta charset="UTF-8">
-<title>RAMC Dashboard</title>
+  <title>RAMC Dashboard</title>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+    }
 
-<style>
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #f3f4f6;
-  margin: 0;
-}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
 
-.container {
-  padding: 20px;
-}
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
 
-.header {
-  background: linear-gradient(135deg, #6366f1, #7c3aed);
-  color: white;
-  padding: 20px;
-  border-radius: 12px;
-  font-size: 24px;
-  font-weight: bold;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}
+    th {
+      background-color: #f5f5f5;
+    }
 
-/* CARDS */
-.cards {
-  display: flex;
-  gap: 15px;
-  margin: 20px 0;
-}
+    tr:hover {
+      background-color: #f1f1f1;
+    }
 
-.card {
-  flex: 1;
-  padding: 20px;
-  border-radius: 12px;
-  background: white;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-  text-align: center;
-}
-
-.card p {
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.green { background: #dcfce7; }
-.orange { background: #fef3c7; }
-.red { background: #fee2e2; }
-
-/* TOP */
-.top-bar {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-}
-
-input {
-  padding: 10px;
-  width: 200px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-button {
-  background: #22c55e;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-button:hover {
-  transform: scale(1.05);
-  background: #16a34a;
-}
-
-/* TABLE */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-}
-
-th, td {
-  padding: 12px;
-  text-align: center;
-}
-
-th {
-  background: #f9fafb;
-}
-
-tr:nth-child(even) {
-  background: #fafafa;
-}
-
-tr:hover {
-  background: #f1f5f9;
-}
-
-/* STATUS */
-.status {
-  padding: 5px 10px;
-  border-radius: 20px;
-  color: white;
-  font-size: 12px;
-}
-
-.status.available { background: #22c55e; }
-.status.maintenance { background: #f59e0b; }
-.status.broken { background: #ef4444; }
-
-</style>
+    button {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="container">
+<h2>RAMC Dashboard</h2>
 
-  <div class="header">
-    📋 RAMC Dashboard
-  </div>
+<!-- FILTER -->
+<select id="filterLocation">
+  <option value="">All Location</option>
+  <option value="Lab">Lab</option>
+  <option value="Lab 1">Lab 1</option>
+  <option value="Lab 2">Lab 2</option>
+  <option value="Chamber">Chamber</option>
+</select>
 
-  <!-- CARDS -->
-  <div class="cards">
-    <div class="card">
-      <h3>Total</h3>
-      <p id="total">0</p>
-    </div>
-    <div class="card green">
-      <h3>Available</h3>
-      <p id="available">0</p>
-    </div>
-    <div class="card orange">
-      <h3>Maintenance</h3>
-      <p id="maintenance">0</p>
-    </div>
-    <div class="card red">
-      <h3>Broken</h3>
-      <p id="broken">0</p>
-    </div>
-  </div>
+<!-- FORM ADD -->
+<h3>Add Data</h3>
+<input id="equipment" placeholder="Equipment">
+<input id="asset" placeholder="Asset">
+<input id="location" placeholder="Location">
+<button onclick="addData()">Add</button>
 
-  <!-- TOP -->
-  <div class="top-bar">
-    <input id="search" placeholder="🔍 Search..." onkeyup="searchData()">
-    <button onclick="addDummy()">+ Add Data</button>
-  </div>
+<br><br>
 
-  <!-- TABLE -->
-  <table>
-    <thead>
-      <tr>
-        <th>Equipment</th>
-        <th>Asset</th>
-        <th>Location</th>
-        <th>Condition</th>
-        <th>Calibration</th>
-        <th>Date In</th>
-        <th>Date Out</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody id="tableBody"></tbody>
-  </table>
-
-</div>
+<table>
+  <thead>
+    <tr>
+      <th>Equipment</th>
+      <th>Asset</th>
+      <th>Location</th>
+      <th>Date In</th>
+      <th>Date Out</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody id="tableBody"></tbody>
+</table>
 
 <script>
+const API = "https://project-dias.onrender.com/equipment";
+let allData = [];
 
-let data = [
-  {
-    equipment: "Microscope",
-    asset: "A001",
-    location: "Lab 1",
-    condition: "Good",
-    calibration: "Yes",
-    date_in: "2026-06-01",
-    date_out: "-",
-    status: "Available"
-  },
-  {
-    equipment: "Scale",
-    asset: "A002",
-    location: "Lab 2",
-    condition: "OK",
-    calibration: "No",
-    date_in: "2026-06-02",
-    date_out: "-",
-    status: "Maintenance"
-  }
-];
+function fetchData() {
+  fetch(API)
+    .then(res => res.json())
+    .then(data => {
+      allData = data;
+      renderTable(data);
+    });
+}
 
-function renderTable(filtered = data) {
-  let html = "";
+function renderTable(data) {
+  const tbody = document.getElementById("tableBody");
+  tbody.innerHTML = "";
 
-  let total = filtered.length;
-  let available = 0;
-  let maintenance = 0;
-  let broken = 0;
-
-  filtered.forEach(item => {
-    let statusClass = "";
-
-    if(item.status === "Available") {
-      statusClass = "available";
-      available++;
-    }
-    else if(item.status === "Maintenance") {
-      statusClass = "maintenance";
-      maintenance++;
-    }
-    else {
-      statusClass = "broken";
-      broken++;
-    }
-
-    html += `
+  data.forEach(item => {
+    tbody.innerHTML += `
       <tr>
         <td>${item.equipment}</td>
         <td>${item.asset}</td>
         <td>${item.location}</td>
-        <td>${item.condition}</td>
-        <td>${item.calibration}</td>
         <td>${item.date_in}</td>
-        <td>${item.date_out}</td>
-        <td><span class="status ${statusClass}">${item.status}</span></td>
+        <td>${item.date_out || '-'}</td>
+        <td>
+          ${item.status === 'Available'
+            ? `<button onclick="borrow(${item.id})">Borrow</button>`
+            : item.status
+          }
+        </td>
       </tr>
     `;
   });
-
-  document.getElementById("tableBody").innerHTML = html;
-
-  document.getElementById("total").innerText = total;
-  document.getElementById("available").innerText = available;
-  document.getElementById("maintenance").innerText = maintenance;
-  document.getElementById("broken").innerText = broken;
 }
 
-function searchData() {
-  let keyword = document.getElementById("search").value.toLowerCase();
+function addData() {
+  const equipment = document.getElementById("equipment").value;
+  const asset = document.getElementById("asset").value;
+  const location = document.getElementById("location").value;
 
-  let filtered = data.filter(item =>
-    item.equipment.toLowerCase().includes(keyword) ||
-    item.asset.toLowerCase().includes(keyword) ||
-    item.location.toLowerCase().includes(keyword)
-  );
+  const today = new Date().toISOString().split('T')[0];
 
-  renderTable(filtered);
-}
-
-function addDummy(){
-  data.push({
-    equipment: "New Tool",
-    asset: "A00" + (data.length+1),
-    location: "Lab",
-    condition: "Good",
-    calibration: "Yes",
-    date_in: "2026-06-25",
-    date_out: "-",
-    status: "Available"
+  fetch(API, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      equipment,
+      asset,
+      location,
+      date_in: today,
+      status: "Available"
+    })
+  })
+  .then(res => res.json())
+  .then(() => {
+    fetchData();
   });
-
-  renderTable();
 }
 
-renderTable();
+function borrow(id) {
+  const today = new Date().toISOString().split('T')[0];
 
+  fetch(`${API}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      date_out: today,
+      status: "Used"
+    })
+  })
+  .then(() => fetchData());
+}
+
+// FILTER LOCATION
+document.getElementById("filterLocation")
+.addEventListener("change", function() {
+  const val = this.value;
+  if (!val) return renderTable(allData);
+
+  const filtered = allData.filter(d => d.location === val);
+  renderTable(filtered);
+});
+
+fetchData();
 </script>
 
 </body>
