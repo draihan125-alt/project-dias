@@ -1,262 +1,278 @@
-<!doctype html>
-<html lang="id">
+<!DOCTYPE html><!DOCTYPE htmlen">
 <head>
 <meta charset="UTF-8">
 <title>RAMC Dashboard</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet"/>
-
 <style>
-* {
-  font-family: 'Poppins', sans-serif;
-  box-sizing: border-box;
-}
-
 body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f3f4f6;
   margin: 0;
-  background: #f4f6f9;
 }
 
-/* HEADER */
-.topbar {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+.container {
+  padding: 20px;
+}
+
+.header {
+  background: linear-gradient(135deg, #6366f1, #7c3aed);
   color: white;
   padding: 20px;
-  margin: 20px;
   border-radius: 12px;
+  font-size: 24px;
+  font-weight: bold;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }
 
-/* TOOLBAR */
-.toolbar {
+/* CARDS */
+.cards {
+  display: flex;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.card {
+  flex: 1;
+  padding: 20px;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+.card p {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.green { background: #dcfce7; }
+.orange { background: #fef3c7; }
+.red { background: #fee2e2; }
+
+/* TOP */
+.top-bar {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin: 0 20px 10px;
+  margin-bottom: 15px;
 }
 
-/* BUTTON */
-.btn-add {
-  padding: 10px 20px;
-  background: #27ae60;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.btn-add:hover {
-  background: #219150;
-}
-
-/* TABLE */
-.table-card {
-  background: white;
-  margin: 20px;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th {
-  background: #f5f5f5;
-  padding: 12px;
-}
-
-td {
+input {
   padding: 10px;
-  border-bottom: 1px solid #eee;
-}
-
-tr:hover {
-  background: #fafafa;
-}
-
-/* BADGE */
-.badge-ok {
-  background: #d4edda;
-  padding: 5px 10px;
-  border-radius: 20px;
-}
-
-.badge-ng {
-  background: #f8d7da;
-  padding: 5px 10px;
-  border-radius: 20px;
-}
-
-/* MODAL */
-.hidden {
-  display: none !important;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 350px;
-}
-
-input, select {
-  width: 100%;
-  margin: 5px 0;
-  padding: 8px;
+  width: 200px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
 }
 
 button {
-  margin-top: 5px;
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
 }
+
+button:hover {
+  transform: scale(1.05);
+  background: #16a34a;
+}
+
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+th, td {
+  padding: 12px;
+  text-align: center;
+}
+
+th {
+  background: #f9fafb;
+}
+
+tr:nth-child(even) {
+  background: #fafafa;
+}
+
+tr:hover {
+  background: #f1f5f9;
+}
+
+/* STATUS */
+.status {
+  padding: 5px 10px;
+  border-radius: 20px;
+  color: white;
+  font-size: 12px;
+}
+
+.status.available { background: #22c55e; }
+.status.maintenance { background: #f59e0b; }
+.status.broken { background: #ef4444; }
+
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="topbar">
-  <h2>📋 RAMC Dashboard</h2>
-</div>
+<div class="container">
 
-<!-- TOOLBAR -->
-<div class="toolbar">
-  <h3>Equipment Data</h3>
-  <button class="btn-add" onclick="openModal()">+ Add Data</button>
-</div>
-
-<!-- TABLE -->
-<div class="table-card">
-<table>
-<thead>
-<tr>
-<th>Equipment</th>
-<th>Asset</th>
-<th>Location</th>
-<th>Condition</th>
-<th>Calibration</th>
-<th>Date In</th>
-<th>Date Out</th>
-<th>Status</th>
-</tr>
-</thead>
-<tbody id="table-body"></tbody>
-</table>
-</div>
-
-<!-- MODAL -->
-<div id="modal" class="modal hidden">
-  <div class="modal-content">
-    <h3>Tambah Data</h3>
-
-    <input id="fEquipment" placeholder="Equipment">
-    <input id="fAsset" placeholder="Asset">
-    <input id="fLocation" placeholder="Location">
-    <input id="fCondition" placeholder="Condition">
-    <input id="fCalibration" placeholder="Calibration">
-    <input id="fDateIn" type="date">
-    <input id="fDateOut" type="date">
-
-    <select id="fStatus">
-      <option value="OK">OK</option>
-      <option value="NG">NG</option>
-    </select>
-
-    <button onclick="saveData()">Save</button>
-    <button onclick="closeModal()">Close</button>
+  <div class="header">
+    📋 RAMC Dashboard
   </div>
+
+  <!-- CARDS -->
+  <div class="cards">
+    <div class="card">
+      <h3>Total</h3>
+      <p id="total">0</p>
+    </div>
+    <div class="card green">
+      <h3>Available</h3>
+      <p id="available">0</p>
+    </div>
+    <div class="card orange">
+      <h3>Maintenance</h3>
+      <p id="maintenance">0</p>
+    </div>
+    <div class="card red">
+      <h3>Broken</h3>
+      <p id="broken">0</p>
+    </div>
+  </div>
+
+  <!-- TOP -->
+  <div class="top-bar">
+    <input id="search" placeholder="🔍 Search..." onkeyup="searchData()">
+    <button onclick="addDummy()">+ Add Data</button>
+  </div>
+
+  <!-- TABLE -->
+  <table>
+    <thead>
+      <tr>
+        <th>Equipment</th>
+        <th>Asset</th>
+        <th>Location</th>
+        <th>Condition</th>
+        <th>Calibration</th>
+        <th>Date In</th>
+        <th>Date Out</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
 </div>
 
 <script>
-const API_URL = "https://project-dias.onrender.com/equipments";
-let data = [];
 
-/* FETCH */
-async function fetchData() {
-  const res = await fetch(API_URL);
-  const result = await res.json();
-  data = result;
+let data = [
+  {
+    equipment: "Microscope",
+    asset: "A001",
+    location: "Lab 1",
+    condition: "Good",
+    calibration: "Yes",
+    date_in: "2026-06-01",
+    date_out: "-",
+    status: "Available"
+  },
+  {
+    equipment: "Scale",
+    asset: "A002",
+    location: "Lab 2",
+    condition: "OK",
+    calibration: "No",
+    date_in: "2026-06-02",
+    date_out: "-",
+    status: "Maintenance"
+  }
+];
+
+function renderTable(filtered = data) {
+  let html = "";
+
+  let total = filtered.length;
+  let available = 0;
+  let maintenance = 0;
+  let broken = 0;
+
+  filtered.forEach(item => {
+    let statusClass = "";
+
+    if(item.status === "Available") {
+      statusClass = "available";
+      available++;
+    }
+    else if(item.status === "Maintenance") {
+      statusClass = "maintenance";
+      maintenance++;
+    }
+    else {
+      statusClass = "broken";
+      broken++;
+    }
+
+    html += `
+      <tr>
+        <td>${item.equipment}</td>
+        <td>${item.asset}</td>
+        <td>${item.location}</td>
+        <td>${item.condition}</td>
+        <td>${item.calibration}</td>
+        <td>${item.date_in}</td>
+        <td>${item.date_out}</td>
+        <td><span class="status ${statusClass}">${item.status}</span></td>
+      </tr>
+    `;
+  });
+
+  document.getElementById("tableBody").innerHTML = html;
+
+  document.getElementById("total").innerText = total;
+  document.getElementById("available").innerText = available;
+  document.getElementById("maintenance").innerText = maintenance;
+  document.getElementById("broken").innerText = broken;
+}
+
+function searchData() {
+  let keyword = document.getElementById("search").value.toLowerCase();
+
+  let filtered = data.filter(item =>
+    item.equipment.toLowerCase().includes(keyword) ||
+    item.asset.toLowerCase().includes(keyword) ||
+    item.location.toLowerCase().includes(keyword)
+  );
+
+  renderTable(filtered);
+}
+
+function addDummy(){
+  data.push({
+    equipment: "New Tool",
+    asset: "A00" + (data.length+1),
+    location: "Lab",
+    condition: "Good",
+    calibration: "Yes",
+    date_in: "2026-06-25",
+    date_out: "-",
+    status: "Available"
+  });
+
   renderTable();
 }
 
-/* RENDER */
-function renderTable() {
-  const tbody = document.getElementById("table-body");
-  tbody.innerHTML = "";
+renderTable();
 
-  data.forEach(item => {
-    const status = item.status?.toUpperCase();
-    const badge = status === "OK" ? "badge-ok" : "badge-ng";
-
-    tbody.innerHTML += `
-    <tr>
-      <td>${item.equipment}</td>
-      <td>${item.asset}</td>
-      <td>${item.location}</td>
-      <td>${item.condition}</td>
-      <td>${item.calibration}</td>
-      <td>${item.date_in?.split('T')[0] || '-'}</td>
-      <td>${item.date_out?.split('T')[0] || '-'}</td>
-      <td><span class="${badge}">${status}</span></td>
-    </tr>`;
-  });
-}
-
-/* SAVE */
-async function saveData() {
-  const newData = {
-    equipment: fEquipment.value,
-    asset: fAsset.value,
-    location: fLocation.value,
-    condition: fCondition.value,
-    calibration: fCalibration.value,
-    date_in: fDateIn.value,
-    date_out: fDateOut.value,
-    status: fStatus.value
-  };
-
-  await fetch(API_URL, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify(newData)
-  });
-
-  alert("✅ Data saved");
-  closeModal();
-  fetchData();
-}
-
-/* MODAL */
-function openModal() {
-  document.getElementById("modal").classList.remove("hidden");
-}
-
-function closeModal() {
-  document.getElementById("modal").classList.add("hidden");
-}
-
-/* klik luar close */
-window.onclick = function(e) {
-  if (e.target.id === "modal") closeModal();
-};
-
-/* AUTO UPDATE MULTI USER 🔥 */
-setInterval(fetchData, 3000);
-
-/* LOAD */
-fetchData();
 </script>
 
 </body>
