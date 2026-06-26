@@ -1,115 +1,212 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>RAMC Dashboard</title>
-  <style>
-    body {
-      font-family: Arial;
-      padding: 20px;
-    }
+<meta charset="UTF-8">
+<title>RAMC Dashboard</title>
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+<style>
+body {
+  font-family: 'Segoe UI';
+  background: #f4f6f9;
+  padding: 20px;
+}
 
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: center;
-    }
+/* HEADER */
+.header {
+  background: linear-gradient(90deg, #6a5acd, #7b68ee);
+  color: white;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 20px;
+}
 
-    th {
-      background-color: #f5f5f5;
-    }
+/* TOP BAR */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+}
 
-    tr:hover {
-      background-color: #f1f1f1;
-    }
+/* INPUT */
+input, select {
+  padding: 8px;
+  margin-right: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
 
-    button {
-      padding: 5px 10px;
-      cursor: pointer;
-    }
-  </style>
+/* BUTTON */
+button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.add-btn { background: #28a745; color: white; }
+.borrow-btn { background: #007bff; color: white; margin-top: 5px; }
+
+/* CARDS */
+.cards {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.card {
+  flex: 1;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+th {
+  background: #f1f3f6;
+  padding: 12px;
+}
+
+/* CELL */
+td {
+  padding: 10px;
+}
+
+/* GRID LINES */
+th, td {
+  border-right: 1px solid #eee;
+}
+
+tr {
+  border-bottom: 1px solid #eee;
+}
+
+th:last-child, td:last-child {
+  border-right: none;
+}
+
+tbody tr:hover {
+  background: #f5f7fa;
+}
+
+/* STATUS */
+.status {
+  padding: 5px 12px;
+  border-radius: 20px;
+  color: white;
+  font-size: 12px;
+}
+
+.available { background: #28a745; }
+.used { background: #dc3545; }
+.maintenance { background: #f39c12; }
+
+</style>
 </head>
 
 <body>
 
-<h2>RAMC Dashboard</h2>
+<div class="header">📋 RAMC Dashboard</div>
 
-<!-- FILTER -->
-<select id="filterLocation">
-  <option value="">All Location</option>
-  <option value="Lab">Lab</option>
-  <option value="Lab 1">Lab 1</option>
-  <option value="Lab 2">Lab 2</option>
-  <option value="Chamber">Chamber</option>
-</select>
+<!-- INPUT + FILTER -->
+<div class="top-bar">
+  <div>
+    <input id="equipment" placeholder="Equipment">
+    <input id="asset" placeholder="Asset">
+    <input id="locationInput" placeholder="Location">
+    <button class="add-btn" onclick="addData()">+ Add</button>
+  </div>
 
-<!-- FORM ADD -->
-<h3>Add Data</h3>
-<input id="equipment" placeholder="Equipment">
-<input id="asset" placeholder="Asset">
-<input id="location" placeholder="Location">
-<button onclick="addData()">Add</button>
+  <select id="filterLocation">
+    <option value="">All Location</option>
+    <option value="CHAMBER">CHAMBER</option>
+    <option value="AGING">AGING</option>
+    <option value="LIFE TEST">LIFE TEST</option>
+    <option value="MQA">MQA</option>
+  </select>
+</div>
 
-<br><br>
+<!-- CARD LOCATION -->
+<div class="cards">
+  <div class="card">CHAMBER: <span id="chamber">0</span></div>
+  <div class="card">AGING: <span id="aging">0</span></div>
+  <div class="card">LIFE TEST: <span id="life">0</span></div>
+  <div class="card">MQA: <span id="mqa">0</span></div>
+</div>
 
 <table>
-  <thead>
-    <tr>
-      <th>Equipment</th>
-      <th>Asset</th>
-      <th>Location</th>
-      <th>Date In</th>
-      <th>Date Out</th>
-      <th>Status</th>
-    </tr>
-  </thead>
-  <tbody id="tableBody"></tbody>
+<thead>
+<tr>
+  <th>Equipment</th>
+  <th>Asset</th>
+  <th>Location</th>
+  <th>Date In</th>
+  <th>Date Out</th>
+  <th>Status</th>
+</tr>
+</thead>
+
+<tbody id="tableBody"></tbody>
 </table>
 
 <script>
+
 const API = "https://project-dias.onrender.com/equipment";
 let allData = [];
 
+// FETCH DATA
 function fetchData() {
   fetch(API)
     .then(res => res.json())
     .then(data => {
       allData = data;
       renderTable(data);
+      updateCards(data);
     });
 }
 
+// RENDER TABLE
 function renderTable(data) {
   const tbody = document.getElementById("tableBody");
   tbody.innerHTML = "";
 
   data.forEach(item => {
     tbody.innerHTML += `
-      <tr>
-        <td>${item.equipment}</td>
-        <td>${item.asset}</td>
-        <td>${item.location}</td>
-        <td>${item.date_in}</td>
-        <td>${item.date_out || '-'}</td>
-        <td>
-          ${item.status === 'Available'
-            ? `<button onclick="borrow(${item.id})">Borrow</button>`
-            : item.status
-          }
-        </td>
-      </tr>
+    <tr>
+      <td>${item.equipment}</td>
+      <td>${item.asset}</td>
+      <td>${item.location}</td>
+      <td>${item.date_in}</td>
+      <td>${item.date_out || '-'}</td>
+      <td>
+        ${
+          item.status === "Available"
+            ? `<span class="status available">Available</span>
+               <br><button class="borrow-btn" onclick="borrow(${item.id})">Borrow</button>`
+            : item.status === "Maintenance"
+            ? `<span class="status maintenance">Maintenance</span>`
+            : `<span class="status used">Used</span>`
+        }
+      </td>
+    </tr>
     `;
   });
 }
 
+// ADD DATA
 function addData() {
   const equipment = document.getElementById("equipment").value;
   const asset = document.getElementById("asset").value;
-  const location = document.getElementById("location").value;
+  const location = document.getElementById("locationInput").value;
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -123,13 +220,10 @@ function addData() {
       date_in: today,
       status: "Available"
     })
-  })
-  .then(res => res.json())
-  .then(() => {
-    fetchData();
-  });
+  }).then(() => fetchData());
 }
 
+// BORROW
 function borrow(id) {
   const today = new Date().toISOString().split('T')[0];
 
@@ -140,21 +234,37 @@ function borrow(id) {
       date_out: today,
       status: "Used"
     })
-  })
-  .then(() => fetchData());
+  }).then(() => fetchData());
 }
 
-// FILTER LOCATION
+// FILTER
 document.getElementById("filterLocation")
-.addEventListener("change", function() {
+.addEventListener("change", function () {
   const val = this.value;
+
   if (!val) return renderTable(allData);
 
   const filtered = allData.filter(d => d.location === val);
   renderTable(filtered);
 });
 
+// UPDATE CARD
+function updateCards(data) {
+  document.getElementById("chamber").innerText =
+    data.filter(d => d.location === "CHAMBER").length;
+
+  document.getElementById("aging").innerText =
+    data.filter(d => d.location === "AGING").length;
+
+  document.getElementById("life").innerText =
+    data.filter(d => d.location === "LIFE TEST").length;
+
+  document.getElementById("mqa").innerText =
+    data.filter(d => d.location === "MQA").length;
+}
+
 fetchData();
+
 </script>
 
 </body>
